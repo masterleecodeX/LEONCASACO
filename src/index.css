@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-background: #ffffff;
+  --color-foreground: #09090b;
+  --color-border: #e4e4e7;
+  --color-muted-foreground: #71717a;
+}

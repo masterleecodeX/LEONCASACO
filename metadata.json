@@ -1,0 +1,6 @@
+{
+  "name": "Blank iOS Page",
+  "description": "A completely blank white page configured with Apple's SF Pro font family.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
