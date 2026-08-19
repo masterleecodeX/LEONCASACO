@@ -1,9 +1,7 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { ImageStreamHero } from "./components/ui/image-stream-hero";
+import { PerspectiveMarquee } from "./components/ui/remocn-perspective-marquee";
+
+import { CircularTestimonialsDemo } from "./components/ui/circular-testimonials";
 
 const CDN = "https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev";
  
@@ -58,29 +56,89 @@ const IMAGES = [
   },
 ];
 
+const CATEGORIES = [
+  "Living room",
+  "Bedroom",
+  "Dining room",
+  "Kitchen",
+  "Bathroom",
+  "Office",
+  "Outdoor",
+  "Lighting & decoration"
+];
+
 export default function App() {
   return (
-    <div className="min-h-screen w-full bg-white font-sans antialiased p-8 flex items-center justify-center">
-      <div className="w-full max-w-6xl mx-auto">
-        <ImageStreamHero
-          images={IMAGES}
-          className="h-[560px] w-full rounded-lg border border-border bg-background"
-        >
-          <div className="relative z-10 flex h-full flex-col items-center justify-between py-12 text-center">
-            <div className="px-6">
-              <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground sm:text-5xl">
-                Your work,
-                <br />
-                front and centre.
-              </h1>
-            </div>
-            <p className="max-w-md text-balance px-6 text-sm text-muted-foreground">
+    <div 
+      className="min-h-screen w-full bg-white font-sans antialiased overflow-x-hidden"
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <ImageStreamHero
+        images={IMAGES}
+        className="h-screen w-full bg-white"
+      >
+        <div className="relative z-10 flex h-full flex-col items-center justify-between py-24 text-center">
+          <div className="px-6">
+            <h1 className="text-balance text-5xl font-medium tracking-tight text-foreground sm:text-7xl -mt-[23px]">
+              LeonCasa &amp; Co.
+              <br />
+              Furniture Meets Art
+            </h1>
+          </div>
+          <div className="flex flex-col items-center mb-[-4px]">
+            <p className="max-w-lg text-balance px-6 text-base text-muted-foreground mb-[13px] mx-auto">
               A hero that leads with the images instead of describing them. Swap in
               your own and the corridor rebuilds around them.
             </p>
+            <div className="animate-bounce mt-8 text-black opacity-60">
+              <svg 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+              </svg>
+            </div>
           </div>
-        </ImageStreamHero>
+        </div>
+      </ImageStreamHero>
+      
+      <div className="h-[400px] md:h-[500px] w-full relative -mt-20 md:-mt-32 z-20">
+        <PerspectiveMarquee
+          className="mt-[32px]"
+          items={CATEGORIES}
+          rotateY={-32}
+          rotateX={9}
+          perspective={870}
+          pixelsPerFrame={5}
+          speed={1}
+          fontSize={100}
+          fadeColor="#ffffff"
+          background="#ffffff"
+          color="#000000"
+        />
       </div>
+      <CircularTestimonialsDemo />
+      
+      <footer className="w-full pb-32 pt-12 px-6 flex flex-col items-center justify-center bg-white relative z-20">
+        <ul className="flex justify-center gap-x-8 max-w-full mx-auto overflow-x-auto whitespace-nowrap scrollbar-hide px-4">
+          {["All", ...CATEGORIES].map(item => (
+            <li key={item} className="flex-shrink-0">
+              <a 
+                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
+                className="text-muted-foreground hover:text-black transition-colors text-lg tracking-tight font-medium"
+              >
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </footer>
     </div>
   );
 }

@@ -3,75 +3,18 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-/* ── the corridor ────────────────────────────────────────────────
- * Two rails of cards ride from far behind the screen toward the
- * viewer. Perspective alone does the work that looks like two
- * animations: as a card's z grows it gets bigger *and* its screen x
- * sweeps outward from the vanishing point, because the projection
- * scales position and size by the same factor.
- *
- * Three things shape it, and each one fixes a specific artefact:
- *
- * 1. Depth is authored as *apparent size*, geometrically — each card
- *    is a constant ratio bigger than the one behind it, all the way
- *    out. Spacing a straight z-range evenly instead makes the near
- *    cards tear apart from each other as the projection blows up.
- * 2. The rails open hard in the first stretch and then hold
- *    (`fan` > 1). That opening cancels the — still slow — growth back
- *    there, so the ribbon leaves the centre as a flat band, bends
- *    once, and only then runs out on the diagonal. Parallel rails
- *    project to a straight cone with no bend at all.
- * 3. Neither end of the loop is ever on screen. A card dies with its
- *    inner edge past 50cqw, clear of the container's edge. And it is
- *    born *across* the axis — `railBirth` is negative, so the newest
- *    card starts on the far side and sweeps back through the centre.
- *    That plugs the throat: the axis stays covered at every instant,
- *    and a newborn lands behind cards that already cover it, so it
- *    needs no fade in. Birthing on its own side instead leaves a hole
- *    at dead centre that blinks open once every cycle.
- *
- * Every length is in `cqw` — a percentage of the container's width —
- * so the whole corridor keeps its proportions at any size. The
- * defaults were fitted numerically against a reference recording's
- * card-height and edge-position profile, not eyeballed.
- * ─────────────────────────────────────────────────────────────── */
-
-/**
- * Geometry of the corridor. Every length is `cqw`, a percentage of the
- * container's width, so the shape is resolution-independent.
- *
- * These interact: the ribbon only stays solid while consecutive cards
- * overlap, which needs `exitHeight / birthHeight` spread over enough
- * `cards`. Raising `exitHeight`, dropping `cards`, or pulling `railExit`
- * in all push toward a visible tear near the frame edge.
- */
 export type CorridorPath = {
-  /** Strength of the projection. Lower is a wider-angle, more dramatic rush. @default 30 */
   perspective?: number;
-  /** Card width in world units. @default 18 */
   cardWidth?: number;
-  /** Card height in world units. @default 25 */
   cardHeight?: number;
-  /** Corner radius applied to each card. @default 0.4 */
   cardRadius?: number;
-  /** On-screen card height at the waist, where a card is born. @default 2.6 */
   birthHeight?: number;
-  /** On-screen card height as a card leaves the frame. @default 46 */
   exitHeight?: number;
-  /**
-   * Lateral offset at birth. Negative starts the card across the axis so the
-   * centre never opens up — see note 3 above. @default -11
-   */
   railBirth?: number;
-  /** Lateral offset once the rails have finished opening. @default 44 */
   railExit?: number;
-  /** How front-loaded the opening is. >1 opens early then holds. @default 3.3 */
   fan?: number;
-  /** Y-rotation at birth, degrees. @default 6 */
   turnBirth?: number;
-  /** Y-rotation at exit, degrees. @default 28 */
   turnExit?: number;
-  /** Keyframe stops used to trace the curve. Raise only if motion looks faceted. @default 24 */
   stops?: number;
 };
 
@@ -90,7 +33,6 @@ const PATH: Required<CorridorPath> = {
   stops: 24,
 };
 
-/** Sample the path once so the CSS keyframes trace the real curve. */
 function keyframes(dir: 1 | -1, name: string, p: Required<CorridorPath>) {
   const steps: string[] = [];
   for (let s = 0; s <= p.stops; s++) {
@@ -115,37 +57,15 @@ function keyframes(dir: 1 | -1, name: string, p: Required<CorridorPath>) {
 
 export type StreamImage = {
   src: string;
-  /** Only used if you drop the decorative treatment; the corridor is aria-hidden. */
   alt?: string;
 };
 
 export type ImageStreamHeroProps = {
-  /**
-   * Images cycled onto the rails. Both rails run the same sequence, so the
-   * corridor reads as one mirrored stream. Fewer than `cards` simply repeat.
-   */
   images: StreamImage[];
-  /**
-   * Cards on each rail at once. More cards means a denser corridor, not a
-   * faster one — spacing is derived from this and `speed`. Drop it far below
-   * the default and consecutive cards grow too fast to stay overlapped near
-   * the exit, which tears a gap in the ribbon.
-   * @default 9
-   */
   cards?: number;
-  /**
-   * Seconds for one card to travel the whole corridor.
-   * @default 18
-   */
   speed?: number;
-  /**
-   * Vertical placement of the corridor's axis, as a percentage of height.
-   * @default 55
-   */
   axis?: number;
-  /** Override any part of the corridor geometry. Merged over the defaults. */
   path?: CorridorPath;
-  /** Content rendered above the corridor. */
   children?: React.ReactNode;
   className?: string;
 };
@@ -197,11 +117,11 @@ export function ImageStreamHero({
           className="absolute inset-0"
           style={{ transformStyle: "preserve-3d" }}
         >
-          {[right, left].map((name) =>
+          {[right, left].map((name, railIndex) =>
             Array.from({ length: cards }, (_, i) => {
-              // Both rails walk the same sequence, so the left side mirrors
-              // the right at every depth.
-              const img = images[i % Math.max(images.length, 1)];
+              // Offset the left rail so it doesn't mirror the right rail
+              const offset = railIndex === 1 ? Math.floor(images.length / 2) : 0;
+              const img = images[(i + offset) % Math.max(images.length, 1)];
               return (
                 <div
                   key={`${name}-${i}`}
@@ -225,8 +145,9 @@ export function ImageStreamHero({
                     <img
                       src={img.src}
                       alt={img.alt ?? ""}
-                      loading="lazy"
-                      decoding="async"
+                      loading="eager"
+                      fetchPriority="high"
+                      decoding="sync"
                       className="h-full w-full object-cover"
                       draggable={false}
                     />

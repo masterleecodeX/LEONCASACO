@@ -1,6 +1,6 @@
 {
-  "name": "Blank iOS Page",
-  "description": "A completely blank white page configured with Apple's SF Pro font family.",
+  "name": "LeonCasa & Co.",
+  "description": "A clean, modern landing page for a high-end furniture brand featuring an image stream hero, perspective marquee, and circular testimonials.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
