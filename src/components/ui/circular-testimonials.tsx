@@ -278,19 +278,21 @@ export const CircularTestimonials = ({
         .testimonial-container {
           width: 100%;
           max-width: 64rem;
-          padding: 2rem;
-          margin-left: -100px;
-          margin-right: 60px;
+          padding: 1rem;
+          margin-left: 0;
+          margin-right: 0;
         }
         .testimonial-grid {
           display: grid;
-          gap: 5rem;
+          gap: 3rem;
         }
         .image-container {
           position: relative;
           width: 100%;
+          max-width: 15rem;
           height: 20rem;
           perspective: 1000px;
+          margin: 3rem auto 0;
         }
         .testimonial-image {
           position: absolute;
@@ -304,6 +306,8 @@ export const CircularTestimonials = ({
           display: flex;
           flex-direction: column;
           justify-content: space-between;
+          align-items: center;
+          text-align: center;
         }
         .name {
           font-weight: bold;
@@ -335,11 +339,40 @@ export const CircularTestimonials = ({
           display: inline-block;
         }
         @media (min-width: 768px) {
+          .testimonial-container {
+            padding: 2rem;
+          }
+          .testimonial-grid {
+            gap: 4rem;
+          }
+          .image-container {
+            max-width: 22rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .testimonial-container {
+            margin: 0 auto;
+          }
           .testimonial-grid {
             grid-template-columns: 4fr 6fr;
+            gap: 5rem;
+          }
+          .image-container {
+            max-width: none;
+            margin: 0;
+          }
+          .testimonial-content {
+            align-items: flex-start;
+            text-align: left;
           }
           .arrow-buttons {
             padding-top: 0;
+          }
+        }
+        @media (min-width: 1280px) {
+          .testimonial-container {
+            margin-left: -100px;
+            margin-right: 60px;
           }
         }
       `}</style>
@@ -377,11 +410,11 @@ const testimonials = [
 ];
 
 export const CircularTestimonialsDemo = () => (
-  <section className="w-full">
+  <section className="w-full relative z-30 hidden md:block">
     {/* Light testimonials section */}
-    <div className="bg-white p-20 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative mt-[40px]">
+    <div className="bg-white p-6 md:py-8 lg:p-20 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative mt-0 md:mt-4 lg:mt-[40px]">
       <div
-        className="items-center justify-center relative flex"
+        className="items-center justify-center relative flex w-full"
         style={{ maxWidth: "1456px" }}
       >
         <CircularTestimonials

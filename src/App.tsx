@@ -1,7 +1,15 @@
+import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { ImageStreamHero } from "./components/ui/image-stream-hero";
 import { PerspectiveMarquee } from "./components/ui/remocn-perspective-marquee";
 
 import { CircularTestimonialsDemo } from "./components/ui/circular-testimonials";
+import { TrailCardDemo } from "./components/ui/trail-card";
+import { HeroFashion } from "./components/ui/hero-fashion";
+import { Footer7 } from "./components/ui/footer-7";
+import { MobileHeroFan } from "./components/ui/mobile-hero-fan";
+import { cn } from "./lib/utils";
 
 const CDN = "https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev";
  
@@ -68,29 +76,111 @@ const CATEGORIES = [
 ];
 
 export default function App() {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [currentView, setCurrentView] = useState<"home" | "fashion">("home");
+
+  const scrollContainerRef = useRef<HTMLUListElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [marqueeFontSize, setMarqueeFontSize] = useState(100);
+  const [marqueeSpeed, setMarqueeSpeed] = useState(1);
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(Math.ceil(scrollLeft) < scrollWidth - clientWidth - 5);
+    }
+  };
+
+  const handleResize = () => {
+    handleScroll();
+    setMarqueeFontSize(window.innerWidth < 768 ? 50 : 100);
+    setMarqueeSpeed(window.innerWidth < 768 ? 0.3 : 1);
+  };
+
+  useEffect(() => {
+    handleResize(); // Call initially
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 250;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div 
       className="min-h-screen w-full bg-white font-sans antialiased overflow-x-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
+      <AnimatePresence>
+        {currentView === "fashion" && (
+          <HeroFashion onBack={() => setCurrentView("home")} />
+        )}
+      </AnimatePresence>
       <ImageStreamHero
         images={IMAGES}
-        className="h-screen w-full bg-white"
+        className="h-[100svh] md:h-[70svh] lg:h-screen w-full bg-white"
       >
-        <div className="relative z-10 flex h-full flex-col items-center justify-between py-24 text-center">
-          <div className="px-6">
-            <h1 className="text-balance text-5xl font-medium tracking-tight text-foreground sm:text-7xl -mt-[23px]">
-              LeonCasa &amp; Co.
+        <div className="relative z-10 flex h-full flex-col items-center justify-between pt-12 pb-8 md:pt-28 md:pb-16 lg:py-24 text-center overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="px-6 w-full max-w-4xl mx-auto">
+            <motion.h1 
+              className="text-4xl sm:text-5xl font-medium tracking-tight text-foreground md:text-6xl lg:text-7xl -mt-[12px] md:-mt-[23px]"
+              variants={{
+                hidden: { opacity: 1 },
+                visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+              }}
+              initial="hidden"
+              animate="visible"
+            >
+              {"LeonCasa & Co.".split("").map((char, i) => (
+                <motion.span key={`l1-${i}`} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
               <br />
-              Furniture Meets Art
-            </h1>
+              {"Furniture Meets Art".split("").map((char, i) => (
+                <motion.span key={`l2-${i}`} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </motion.h1>
           </div>
-          <div className="flex flex-col items-center mb-[-4px]">
-            <p className="max-w-lg text-balance px-6 text-base text-muted-foreground mb-[13px] mx-auto">
+          
+          <div className="md:hidden w-full px-4 max-w-sm mx-auto mt-12 mb-6 shrink-0">
+             <MobileHeroFan images={IMAGES} className="w-full mt-[20px]" />
+          </div>
+
+          <div className="flex flex-col items-center mb-[-4px] shrink-0">
+            <p className="hidden md:block max-w-lg text-balance px-6 text-sm sm:text-base text-muted-foreground mb-3 mx-auto md:max-w-xl">
               A hero that leads with the images instead of describing them. Swap in
               your own and the corridor rebuilds around them.
             </p>
-            <div className="animate-bounce mt-8 text-black opacity-60">
+            
+            <div className="md:hidden h-[90px] w-[100vw] relative flex items-center justify-center overflow-hidden mt-12">
+              <PerspectiveMarquee
+                className="mt-0"
+                items={CATEGORIES}
+                rotateY={-32}
+                rotateX={9}
+                perspective={870}
+                pixelsPerFrame={5}
+                speed={marqueeSpeed}
+                fontSize={marqueeFontSize}
+                fadeColor="#ffffff"
+                background="#ffffff"
+                color="#000000"
+              />
+            </div>
+
+            <div className="animate-bounce mt-10 md:mt-8 text-black opacity-60">
               <svg 
                 width="24" 
                 height="24" 
@@ -108,16 +198,16 @@ export default function App() {
         </div>
       </ImageStreamHero>
       
-      <div className="h-[400px] md:h-[500px] w-full relative -mt-20 md:-mt-32 z-20">
+      <div className="hidden md:flex h-[140px] md:h-[250px] lg:h-[400px] w-full relative -mt-4 md:-mt-12 lg:-mt-24 z-20 items-center justify-center overflow-hidden">
         <PerspectiveMarquee
-          className="mt-[32px]"
+          className="mt-0 md:mt-[16px] lg:mt-[32px]"
           items={CATEGORIES}
           rotateY={-32}
           rotateX={9}
           perspective={870}
           pixelsPerFrame={5}
-          speed={1}
-          fontSize={100}
+          speed={marqueeSpeed}
+          fontSize={marqueeFontSize}
           fadeColor="#ffffff"
           background="#ffffff"
           color="#000000"
@@ -125,20 +215,72 @@ export default function App() {
       </div>
       <CircularTestimonialsDemo />
       
-      <footer className="w-full pb-32 pt-12 px-6 flex flex-col items-center justify-center bg-white relative z-20">
-        <ul className="flex justify-center gap-x-8 max-w-full mx-auto overflow-x-auto whitespace-nowrap scrollbar-hide px-4">
-          {["All", ...CATEGORIES].map(item => (
-            <li key={item} className="flex-shrink-0">
-              <a 
-                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
-                className="text-muted-foreground hover:text-black transition-colors text-lg tracking-tight font-medium"
+      <footer className="w-full pb-8 pt-12 px-6 flex flex-col items-center justify-center bg-white relative z-20">
+        <div className="w-full max-w-7xl h-px bg-border mb-8 mx-auto" />
+        <div className="relative w-full max-w-full xl:max-w-7xl mx-auto flex items-center xl:justify-center">
+          <AnimatePresence>
+            {showLeftArrow && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute left-0 z-10 flex h-full items-center bg-gradient-to-r from-white via-white/80 to-transparent pr-8 pointer-events-none"
               >
-                {item}
-              </a>
-            </li>
-          ))}
-        </ul>
+                <button 
+                  onClick={() => scroll('left')} 
+                  className="pointer-events-auto p-1.5 text-gray-400 hover:text-black transition-colors flex items-center justify-center"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <ul 
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex justify-start xl:justify-center gap-x-8 max-w-full mx-auto overflow-x-auto whitespace-nowrap no-scrollbar px-4 py-2 scroll-smooth"
+          >
+            {["All", ...CATEGORIES].map(item => (
+              <li key={item} className="flex-shrink-0">
+                <button
+                  onClick={() => setActiveCategory(item)}
+                  className={cn(
+                    "transition-colors text-lg tracking-tight font-medium cursor-pointer",
+                    activeCategory === item ? "text-black" : "text-muted-foreground hover:text-black"
+                  )}
+                >
+                  {item}
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <AnimatePresence>
+            {showRightArrow && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 z-10 flex h-full items-center justify-end bg-gradient-to-l from-white via-white/80 to-transparent pl-8 pointer-events-none"
+              >
+                <button 
+                  onClick={() => scroll('right')} 
+                  className="pointer-events-auto p-1.5 text-gray-400 hover:text-black transition-colors flex items-center justify-center"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </footer>
+      {activeCategory === "All" && (
+        <TrailCardDemo onClick={() => setCurrentView("fashion")} />
+      )}
+      <Footer7 />
     </div>
   );
 }
