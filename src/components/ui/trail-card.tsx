@@ -142,7 +142,7 @@ const CARDS = [
 
 export function TrailCardDemo({ onClick }: { onClick?: () => void }) {
   return (
-    <div className="relative z-20 flex w-full items-center justify-center bg-white px-6 md:px-12 lg:px-16 pt-16 pb-24 md:pt-20 md:pb-32 -mt-[60px] md:mt-0">
+    <div className="flex w-full items-center justify-center bg-white px-6 md:px-12 lg:px-16 pt-16 pb-24 md:pt-20 md:pb-32 -mt-[60px] md:mt-0">
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 place-items-center md:place-items-start">
         {CARDS.map((card, idx) => (
           <TrailCard
