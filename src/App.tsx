@@ -127,9 +127,9 @@ export default function App() {
       </AnimatePresence>
       <ImageStreamHero
         images={IMAGES}
-        className="h-[100svh] md:h-[70svh] lg:h-screen w-full bg-white"
+        className="min-h-[100svh] md:min-h-0 md:h-[70svh] lg:h-screen w-full bg-white"
       >
-        <div className="relative z-10 flex h-full flex-col items-center justify-between pt-12 pb-8 md:pt-28 md:pb-16 lg:py-24 text-center overflow-y-hidden overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="relative z-10 flex h-full flex-col items-center justify-between pt-12 pb-8 md:pt-28 md:pb-16 lg:py-24 text-center overflow-x-hidden">
           <div className="px-6 w-full max-w-4xl mx-auto">
             <motion.h1 
               className="text-4xl sm:text-5xl font-medium tracking-tight text-foreground md:text-6xl lg:text-7xl -mt-[12px] md:-mt-[23px]"
