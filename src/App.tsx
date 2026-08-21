@@ -79,22 +79,10 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [currentView, setCurrentView] = useState<"home" | "fashion">("home");
 
-  const scrollContainerRef = useRef<HTMLUListElement>(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
   const [marqueeFontSize, setMarqueeFontSize] = useState(100);
   const [marqueeSpeed, setMarqueeSpeed] = useState(1);
 
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      setShowLeftArrow(scrollLeft > 0);
-      setShowRightArrow(Math.ceil(scrollLeft) < scrollWidth - clientWidth - 5);
-    }
-  };
-
   const handleResize = () => {
-    handleScroll();
     setMarqueeFontSize(window.innerWidth < 768 ? 50 : 100);
     setMarqueeSpeed(window.innerWidth < 768 ? 0.3 : 1);
   };
@@ -104,16 +92,6 @@ export default function App() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 250;
-      scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
 
   return (
     <div 
@@ -217,30 +195,9 @@ export default function App() {
       
       <footer className="w-full pb-8 pt-12 px-6 flex flex-col items-center justify-center bg-white relative z-20">
         <div className="w-full max-w-7xl h-px bg-border mb-8 mx-auto" />
-        <div className="relative w-full max-w-full xl:max-w-7xl mx-auto flex items-center xl:justify-center">
-          <AnimatePresence>
-            {showLeftArrow && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="absolute left-0 z-10 flex h-full items-center bg-gradient-to-r from-white via-white/80 to-transparent pr-8 pointer-events-none"
-              >
-                <button 
-                  onClick={() => scroll('left')} 
-                  className="pointer-events-auto p-1.5 text-gray-400 hover:text-black transition-colors flex items-center justify-center"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
+        <div className="relative w-full max-w-full xl:max-w-7xl mx-auto flex flex-wrap items-center justify-center">
           <ul 
-            ref={scrollContainerRef}
-            onScroll={handleScroll}
-            className="flex justify-start xl:justify-center gap-x-8 max-w-full mx-auto overflow-x-auto whitespace-nowrap no-scrollbar px-4 py-2 scroll-smooth"
+            className="flex flex-wrap justify-center gap-x-6 gap-y-4 max-w-4xl mx-auto px-4 py-2"
           >
             {["All", ...CATEGORIES].map(item => (
               <li key={item} className="flex-shrink-0">
@@ -256,25 +213,6 @@ export default function App() {
               </li>
             ))}
           </ul>
-
-          <AnimatePresence>
-            {showRightArrow && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 z-10 flex h-full items-center justify-end bg-gradient-to-l from-white via-white/80 to-transparent pl-8 pointer-events-none"
-              >
-                <button 
-                  onClick={() => scroll('right')} 
-                  className="pointer-events-auto p-1.5 text-gray-400 hover:text-black transition-colors flex items-center justify-center"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </footer>
       {activeCategory === "All" && (
