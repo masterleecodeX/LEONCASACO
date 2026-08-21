@@ -127,7 +127,7 @@ export default function App() {
       </AnimatePresence>
       <ImageStreamHero
         images={IMAGES}
-        className="min-h-[100svh] md:min-h-0 md:h-[70svh] lg:h-screen w-full bg-white"
+        className="sticky top-0 z-0 h-[100svh] md:h-[70svh] lg:h-screen w-full bg-white"
       >
         <div className="relative z-10 flex h-full flex-col items-center justify-between pt-12 pb-8 md:pt-28 md:pb-16 lg:py-24 text-center overflow-x-hidden">
           <div className="px-6 w-full max-w-4xl mx-auto">
