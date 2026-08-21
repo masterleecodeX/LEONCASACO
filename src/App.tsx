@@ -127,9 +127,9 @@ export default function App() {
       </AnimatePresence>
       <ImageStreamHero
         images={IMAGES}
-        className="min-h-[100svh] md:min-h-0 md:h-[70svh] lg:h-screen w-full bg-white"
+        className="flex flex-col min-h-[100svh] md:min-h-[70svh] lg:min-h-screen w-full bg-white"
       >
-        <div className="relative z-10 flex h-full flex-col items-center justify-between pt-12 pb-8 md:pt-28 md:pb-16 lg:py-24 text-center overflow-x-hidden">
+        <div className="relative z-10 flex flex-1 flex-col items-center justify-between pt-12 pb-8 md:pt-28 md:pb-16 lg:py-24 text-center overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <div className="px-6 w-full max-w-4xl mx-auto">
             <motion.h1 
               className="text-4xl sm:text-5xl font-medium tracking-tight text-foreground md:text-6xl lg:text-7xl -mt-[12px] md:-mt-[23px]"
@@ -215,8 +215,8 @@ export default function App() {
       </div>
       <CircularTestimonialsDemo />
       
-      <div className="w-full pb-4 pt-4 md:pb-8 md:pt-12 px-6 flex flex-col items-center justify-center bg-white sticky top-0 z-50 shadow-sm md:shadow-none">
-        <div className="hidden md:block w-full max-w-7xl h-px bg-border mb-8 mx-auto" />
+      <footer className="w-full pb-8 pt-12 px-6 flex flex-col items-center justify-center bg-white relative z-20">
+        <div className="w-full max-w-7xl h-px bg-border mb-8 mx-auto" />
         <div className="relative w-full max-w-full xl:max-w-7xl mx-auto flex items-center xl:justify-center">
           <AnimatePresence>
             {showLeftArrow && (
@@ -276,7 +276,7 @@ export default function App() {
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </footer>
       {activeCategory === "All" && (
         <TrailCardDemo onClick={() => setCurrentView("fashion")} />
       )}
